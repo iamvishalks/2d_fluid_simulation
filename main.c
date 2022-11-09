@@ -68,8 +68,10 @@ bool compile_shader_source(const char *source, unsigned int shader_type, unsigne
         fprintf(stderr, "ERROR: could not compile %s\n", shader_type_as_cstr(shader_type));
         fprintf(stderr, "%. *s\n", message_size, message);
         return false;
-    
     }
+
+    return true;
+
 
 }
 
