@@ -21,7 +21,7 @@
 #define SCREEN_HEIGHT 600
 
 const char *vert_shader_source =
-    "#version 33 core\n"
+    "#version 330 core\n"
     "\n"
     "void main()\n"
     "{\n"
@@ -29,7 +29,7 @@ const char *vert_shader_source =
     "}\n";
 
 const char *frag_shader_source =
-    "#version 33 core\n"
+    "#version 330 core\n"
     "\n"
     "void main()\n"
     "{\n"
@@ -121,6 +121,30 @@ void window_size_callback(GLFWwindow *window, int width, int height)
     glViewport(width / 2 - SCREEN_WIDTH / 2, height / 2 - SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
+void load_shaders()
+{
+    unsigned int vert_shader = 0;
+    if (!compile_shader_source(vert_shader_source, GL_VERTEX_SHADER, &vert_shader))
+    {
+        exit(1);
+    }
+
+    unsigned int frag_shader = 0;
+    if (!compile_shader_source(frag_shader_source, GL_FRAGMENT_SHADER, &frag_shader))
+    {
+        exit(1);
+    }
+
+    unsigned int program = 0;
+    if(!link_program(vert_shader, frag_shader,&program))
+    {
+        exit(1);
+    }
+
+    glUseProgram(program);
+
+}
+
 int main()
 {
     if (!glfwInit())
@@ -146,7 +170,7 @@ int main()
         glfwTerminate();
         exit(1);
     }
-//test
+    // test
     glfwMakeContextCurrent(window);
 
     if (GLEW_OK != glewInit())
@@ -170,6 +194,8 @@ int main()
     glfwSetFramebufferSizeCallback(window, window_size_callback);
 
     // time = glfwGetTime();
+
+    load_shaders();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     while (!glfwWindowShouldClose(window))
