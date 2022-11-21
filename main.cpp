@@ -146,7 +146,7 @@ int main()
         glfwTerminate();
         exit(1);
     }
-
+//test
     glfwMakeContextCurrent(window);
 
     if (GLEW_OK != glewInit())
