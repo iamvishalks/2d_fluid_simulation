@@ -71,8 +71,6 @@ bool compile_shader_source(const char *source, unsigned int shader_type, unsigne
     }
 
     return true;
-
-
 }
 
 void MessageCallback(GLenum source,
