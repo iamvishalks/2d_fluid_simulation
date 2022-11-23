@@ -184,6 +184,29 @@ void init_buffers()
     glVertexAttribPointer(COLOR_ATTRIB, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)(sizeof(float) * 2));
 }
 
+void vert(float x, float y, float r, float g, float b)
+{
+    verts[verts_count].x = x;
+    verts[verts_count].y = y;
+    verts[verts_count].r = r;
+    verts[verts_count].g = g;
+    verts[verts_count].b = b;
+
+    verts_count++;
+}
+
+void begin_verts()
+{
+    verts_count = 0;
+}
+
+void end_verts()
+{
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, verts_count * sizeof(verts[0]), verts);
+}
+
 int main()
 {
     if (!glfwInit())
@@ -236,10 +259,19 @@ int main()
 
     init_shaders();
     init_buffers();
+    // sync_buffers();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     while (!glfwWindowShouldClose(window))
     {
+        begin_verts();
+        vert(0.0, 0.0, 0.0, 0.0, 0.0);
+        vert(10.0, 10.0, 0.0, 0.0, 0.0);
+        vert(20.0, 20.0, 0.0, 0.0, 0.0);
+        end_verts();
+
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4,verts_count);
+
         glClear(GL_COLOR_BUFFER_BIT);
 
         glfwSwapBuffers(window);
