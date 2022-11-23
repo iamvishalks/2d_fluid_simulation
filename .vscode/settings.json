@@ -1,5 +1,12 @@
 {
     "files.associations": {
         "iostream": "cpp"
-    }
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/vishal/Desktop/vks-linus-base/2d_fluid_simulation",
+            "binaryPath": "/home/vishal/Desktop/vks-linus-base/2d_fluid_simulation/mpm",
+            "binaryArgs": []
+        }
+    ]
 }

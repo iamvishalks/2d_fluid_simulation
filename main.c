@@ -121,7 +121,7 @@ void window_size_callback(GLFWwindow *window, int width, int height)
     glViewport(width / 2 - SCREEN_WIDTH / 2, height / 2 - SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-void load_shaders()
+void init_shaders()
 {
     unsigned int vert_shader = 0;
     if (!compile_shader_source(vert_shader_source, GL_VERTEX_SHADER, &vert_shader))
@@ -136,13 +136,52 @@ void load_shaders()
     }
 
     unsigned int program = 0;
-    if(!link_program(vert_shader, frag_shader,&program))
+    if (!link_program(vert_shader, frag_shader, &program))
     {
         exit(1);
     }
 
     glUseProgram(program);
+}
 
+typedef enum
+{
+    POSTITON_ATTRIB = 0,
+    COLOR_ATTRIB,
+    COUNT_ATTRIBS
+} Attribs;
+
+typedef struct
+{
+    float x;
+    float y;
+    float r;
+    float g;
+    float b;
+
+} Vert;
+
+#define VERTS_CAPACITY 1024
+Vert verts[VERTS_CAPACITY];
+
+unsigned long verts_count = 0;
+
+unsigned int vao = 0;
+unsigned int vbo = 0;
+
+void init_buffers()
+{
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_DYNAMIC_DRAW);
+
+    glEnableVertexAttribArray(POSTITON_ATTRIB);
+
+    glVertexAttribPointer(POSTITON_ATTRIB, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)0);
+    glVertexAttribPointer(COLOR_ATTRIB, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)(sizeof(float) * 2));
 }
 
 int main()
@@ -195,7 +234,8 @@ int main()
 
     // time = glfwGetTime();
 
-    load_shaders();
+    init_shaders();
+    init_buffers();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     while (!glfwWindowShouldClose(window))
