@@ -6,9 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <fstream>
+using namespace std;
 
+#include <string>
 #include <unistd.h>
-
+#include<iostream>
 #define GLEW_STATIC
 #include <GL/glew.h>
 
@@ -20,22 +23,27 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
-const char *vert_shader_source =
-    "#version 330 core\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "\n"
-    "}\n";
+string vert_shader_source; 
+/*= 
+"#version 330 core\n"
+"void main()\n"
+"{\n"
+"   gl_Position = vec4(\n"
+"       2.0 * float(gl_VertexID & 1) - 1,\n"
+"       2.0 * float((gl_VertexID >> 1) & 1)-1,\n"
+"       0.0,\n"
+"       1.0);\n"
+"}\n";
+*/
+string frag_shader_source;
+/* = 
+"#version 330 core\n"
 
-const char *frag_shader_source =
-    "#version 330 core\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "\n"
-    "}\n";
-
+"void main()\n"
+"{\n"
+"    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+"}\n";
+*/
 const char *shader_type_as_cstr(unsigned int shader)
 {
     switch (shader)
@@ -124,13 +132,13 @@ void window_size_callback(GLFWwindow *window, int width, int height)
 void init_shaders()
 {
     unsigned int vert_shader = 0;
-    if (!compile_shader_source(vert_shader_source, GL_VERTEX_SHADER, &vert_shader))
+    if (!compile_shader_source(vert_shader_source.c_str(), GL_VERTEX_SHADER, &vert_shader))
     {
         exit(1);
     }
 
     unsigned int frag_shader = 0;
-    if (!compile_shader_source(frag_shader_source, GL_FRAGMENT_SHADER, &frag_shader))
+    if (!compile_shader_source(frag_shader_source.c_str(), GL_FRAGMENT_SHADER, &frag_shader))
     {
         exit(1);
     }
@@ -209,6 +217,45 @@ void end_verts()
 
 int main()
 {
+
+  ifstream _shaderReader("vertex.glsl");
+    string line = "";
+
+    //string ShaderCode = "";
+
+    while (getline(_shaderReader, line))
+    {
+        vert_shader_source += line + '\n';
+    }
+
+    //vert_shader_source.c_str();
+
+    _shaderReader.close();
+
+
+
+    //cout<<ShaderCode;
+
+
+
+    _shaderReader.open("frag.glsl");
+    line = "";
+
+    string ShaderCode1 = "";
+
+    while (getline(_shaderReader, line))
+    {
+       frag_shader_source += line + '\n';
+    }
+
+    //frag_shader_source.c_str();
+
+    _shaderReader.close();
+
+
+    //cout<<ShaderCode;
+
+
     if (!glfwInit())
     {
         fprintf(stderr, "ERROR: could not initialize GLFW\n");
@@ -259,7 +306,6 @@ int main()
 
     init_shaders();
     init_buffers();
-    // sync_buffers();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     while (!glfwWindowShouldClose(window))
@@ -270,9 +316,10 @@ int main()
         vert(20.0, 20.0, 0.0, 0.0, 0.0);
         end_verts();
 
-        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4,verts_count);
+        // glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, verts_count);
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        // glClear(GL_COLOR_BUFFER_BIT);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
